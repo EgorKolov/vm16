@@ -34,5 +34,30 @@ impl Memory {
         assert!((index as usize) + 1 < self.vec.len(), "write_u16: {index}: memory unreachable");
         (self.vec[index as usize], self.vec[index as usize + 1]) = byte_ops::u16_to_u8(value);
     }
+    
+    pub fn len(&self) -> usize {
+        self.vec.len()
+    }
 }
 
+pub struct Registers {
+    mem: Memory,
+}
+
+impl Registers {
+    pub fn new(reg_count: usize) -> Self {
+        Self {
+            mem: Memory::new(2 * reg_count)
+        }
+    }
+    
+    pub fn read(&self, reg: u8) -> u16 {
+        assert!((2 * reg as usize) < self.mem.len(), "read: {reg}: register unreachable");
+        self.mem.read_u16(2 * reg as u16)
+    }
+    
+    pub fn write(&mut self, reg: u8, val: u16) {
+        assert!((2 * reg as usize) < self.mem.len(), "write: {reg}: register unreachable");
+        self.mem.write_u16(2 * reg as u16, val)
+    }
+}
